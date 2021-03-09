@@ -1,4 +1,5 @@
 <link href="/static/jquery.orgchart.css" media="all" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <body>
     <div id="orgChart" class="orgChart vertical_render"></div>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -84,21 +85,23 @@
                     // 추가 버튼 클릭
                     container.find('.org-add-button').click(function(e){
                         let this_id = $(this).parent().parent().attr('node-id');
+                        let class_box = $(this).parent();
 
                         // 새로운 노드 만들기
-                        self.newNode(this_id);
+                        self.newNode(this_id, class_box);
                         e.stopPropagation();
                     });
 
                     // 삭제 버튼 클릭
                     container.find('.org-del-button').click(function(e){
                         let this_id = $(this).parent().parent().attr('node-id');
+                        let class_box = $(this).parent();
 
                         // 노드 삭제
                         if(this_id == 1){
                             alert('첫 번째 노드는 삭제할 수 없습니다.');
                         }else {
-                            self.deleteNode(this_id);
+                            self.deleteNode(this_id, class_box);
                             e.stopPropagation();
                         }
                     });
@@ -108,6 +111,7 @@
                         if($(this).parent().hasClass('open')){
                             $(this).parent().removeClass('open');
                         }else{
+                            container.find('.open-close-button').parent().removeClass('open');
                             $(this).parent().addClass('open');
                         }
                     });
@@ -153,7 +157,10 @@
                 }
 
                 // 새로운 노드 만들기
-                this.newNode = function(parentId){
+                this.newNode = function(parentId, class_box){
+
+                    // 박스 닫기
+                    class_box.removeClass('open');
 
                     // 새롭게 만들어지는 노드 id값 생성
                     let next_id = Object.keys(nodes).length;
@@ -162,8 +169,8 @@
                     }
 
                     // 새롭게 만들어진 노드 추가하기
-                    self.addNode({id: next_id, name: '', parent: parentId});
-                    self.add_ajax({id: next_id, name: '', parent: parentId});
+                    setTimeout(() => self.addNode({id: next_id, name: '', parent: parentId}), 300)
+                    setTimeout(() => self.add_ajax({id: next_id, name: '', parent: parentId}), 300)
                 }
 
                 // 새롭게 만들어진 노드 추가하기
@@ -177,7 +184,10 @@
                 }
 
                 // 노드 삭제하기
-                this.deleteNode = function(id){
+                this.deleteNode = function(id, class_box){
+
+                    // 박스 닫기
+                    class_box.removeClass('open');
 
                     // Children Node가 존재 할 경우
                     if(nodes[id].children.length > 0){
@@ -187,10 +197,10 @@
                     }else{
 
                         // 노드 삭제
-                        nodes[nodes[id].data.parent].removeChild(id);
-                        delete nodes[id];
-                        self.draw();
-                        self.del_ajax(id);
+                        setTimeout(() => nodes[nodes[id].data.parent].removeChild(id), 300)
+                        setTimeout(() => delete nodes[id], 300)
+                        setTimeout(() => self.draw(), 300)
+                        setTimeout(() => self.del_ajax(id), 300)
                     }
                 }
 
@@ -332,9 +342,9 @@
                         "</div>";
 
                     let add_delete =
-                        "<div class='open'>" +
-                            "<div class='org-add-button'><span class='ad'>ADD</span></div>" +
-                            "<div class='org-del-button'><span class='ad'>DEL</span></div>" +
+                        "<div>" +
+                            "<div class='org-add-button' title='추가'><span class='ad'><i class='fa fa-plus' aria-hidden='true'></i></span></div>" +
+                            "<div class='org-del-button' title='삭제'><span class='ad'><i class='fa fa-minus' aria-hidden='true'></i></span></div>" +
                             "<div class='open-close-button'><span class='arrow'>▼</span></div>" +
                         "</div>";
 
@@ -369,7 +379,7 @@
              if(rbyte > maxByte){
                 str2 = str.substr(0,rlen);
                 obj.value = str2;
-                fnChkByte(obj, maxByte);
+                check_byte(obj, maxByte);
              }
         }
     </script>
